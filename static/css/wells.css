@@ -1,0 +1,58 @@
+/* Страница списка скважин */
+.wells-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.well-card {
+  border-left: 4px solid var(--primary);
+}
+
+.well-card .pressure {
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.well-card .temperature {
+  color: var(--warning);
+  font-weight: bold;
+}
+
+/* Страница деталей скважины */
+.well-details {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 15px;
+  padding: 25px;
+}
+
+[data-bs-theme="dark"] .well-details {
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+}
+
+/* Форма скважины */
+.well-form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.well-form .form-label {
+  font-weight: 500;
+}
+
+/* Индикаторы */
+.status-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.status-active {
+  background-color: var(--secondary);
+}
+
+.status-inactive {
+  background-color: var(--danger);
+}

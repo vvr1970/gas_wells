@@ -1,0 +1,45 @@
+/* Светлая тема (по умолчанию) */
+[data-bs-theme="light"] {
+  --bg-color: #ffffff;
+  --text-color: #212529;
+  --card-bg: #ffffff;
+  --border-color: #dee2e6;
+}
+
+/* Темная тема */
+[data-bs-theme="dark"] {
+  --bg-color: #1a1a1a;
+  --text-color: #f8f9fa;
+  --card-bg: #2d2d2d;
+  --border-color: #444;
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+
+  .card {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+  }
+
+  .form-control {
+    background-color: #333;
+    border-color: #444;
+    color: white;
+  }
+
+  .table {
+    color: var(--text-color);
+  }
+}
+
+/* Переключатель темы */
+.theme-toggle {
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.theme-toggle:hover {
+  transform: rotate(30deg);
+}
