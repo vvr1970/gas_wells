@@ -1,0 +1,9 @@
+{{define "title"}}Ошибка{{end}}
+{{define "content"}}
+<div class="alert alert-danger">
+    <h4 class="alert-heading">Ошибка {{.StatusCode}}</h4>
+    <p>{{.Error}}</p>
+    <hr>
+    <a href="/wells" class="btn btn-outline-secondary">Вернуться к списку</a>
+</div>
+{{end}}
