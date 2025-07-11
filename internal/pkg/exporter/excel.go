@@ -1,6 +1,11 @@
 package exporter
 
-import "fmt"
+import (
+	"fmt"
+	"gas_wells/internal/entity"
+
+	"github.com/xuri/excelize/v2"
+)
 
 // internal/pkg/exporter/excel.go
 func ExportToExcel(wells []entity.Well, filename string) error {

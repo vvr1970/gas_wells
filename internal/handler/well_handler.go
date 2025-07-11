@@ -8,14 +8,15 @@ import (
 	"gas_wells/internal/service"
 	"net/http"
 	"strconv"
+	"text/template"
 
 	"github.com/go-chi/chi/v5"
 )
 
 type WellHandler struct {
-	service *service.WellService
-	logger  logger.Logger
-	//templates *template.Template
+	service   *service.WellService
+	logger    logger.Logger
+	templates *template.Template
 }
 
 func NewWellHandler(service *service.WellService, log logger.Logger) *WellHandler {
@@ -37,7 +38,7 @@ func (h *WellHandler) RegisterRoutes(r chi.Router) {
 
 // ListWells - отображает список всех скважин
 func (h *WellHandler) ListWells(w http.ResponseWriter, r *http.Request) {
-	wells, err := h.service.ListWells(r.Context())
+	wells, err := h.service.ListWells(r.Context(), 100, 1)
 	if err != nil {
 		h.logger.Error("failed to list wells", "error", err)
 		h.renderError(w, "Failed to load wells", http.StatusInternalServerError)
@@ -70,9 +71,27 @@ func (h *WellHandler) CreateWell(w http.ResponseWriter, r *http.Request) {
 	}
 
 	well := &entity.Well{
-		Name:        r.FormValue("name"),
-		Pressure:    parseFloat(r.FormValue("pressure")),
-		Temperature: parseFloat(r.FormValue("temperature")),
+		Name:      r.FormValue("name"),
+		Location:  r.FormValue("location"),
+		GammaG:    parseFloat(r.FormValue("gammag")),
+		Temp:      parseFloat(r.FormValue("temp")),
+		TempUst:   parseFloat(r.FormValue("tempust")),
+		Depth:     parseFloat(r.FormValue("depth")),
+		Pbuf:      parseFloat(r.FormValue("pbuf")),
+		Ptb:       parseFloat(r.FormValue("ptb")),
+		Ppl:       parseFloat(r.FormValue("ppl")),
+		Pz:        parseFloat(r.FormValue("pz")),
+		Q:         parseFloat(r.FormValue("q")),
+		Roughness: parseFloat(r.FormValue("roughness")),
+		Diameter:  parseFloat(r.FormValue("diameter")),
+		A:         parseFloat(r.FormValue("a")),
+		B:         parseFloat(r.FormValue("b")),
+		Mu:        parseFloat(r.FormValue("mu")),
+		WGF:       parseFloat(r.FormValue("wgf")),
+		Rog:       parseFloat(r.FormValue("rog")),
+		Qmin:      parseFloat(r.FormValue("qmin")),
+		Pmax:      parseFloat(r.FormValue("pmax")),
+		Status:    r.FormValue("status"),
 	}
 
 	createdWell, err := h.service.CreateWell(r.Context(), well)
@@ -145,10 +164,27 @@ func (h *WellHandler) UpdateWell(w http.ResponseWriter, r *http.Request) {
 	}
 
 	well := &entity.Well{
-		ID:          id,
-		Name:        r.FormValue("name"),
-		Pressure:    parseFloat(r.FormValue("pressure")),
-		Temperature: parseFloat(r.FormValue("temperature")),
+		Name:      r.FormValue("name"),
+		Location:  r.FormValue("location"),
+		GammaG:    parseFloat(r.FormValue("gammag")),
+		Temp:      parseFloat(r.FormValue("temp")),
+		TempUst:   parseFloat(r.FormValue("tempust")),
+		Depth:     parseFloat(r.FormValue("depth")),
+		Pbuf:      parseFloat(r.FormValue("pbuf")),
+		Ptb:       parseFloat(r.FormValue("ptb")),
+		Ppl:       parseFloat(r.FormValue("ppl")),
+		Pz:        parseFloat(r.FormValue("pz")),
+		Q:         parseFloat(r.FormValue("q")),
+		Roughness: parseFloat(r.FormValue("roughness")),
+		Diameter:  parseFloat(r.FormValue("diameter")),
+		A:         parseFloat(r.FormValue("a")),
+		B:         parseFloat(r.FormValue("b")),
+		Mu:        parseFloat(r.FormValue("mu")),
+		WGF:       parseFloat(r.FormValue("wgf")),
+		Rog:       parseFloat(r.FormValue("rog")),
+		Qmin:      parseFloat(r.FormValue("qmin")),
+		Pmax:      parseFloat(r.FormValue("pmax")),
+		Status:    r.FormValue("status"),
 	}
 
 	_, err = h.service.UpdateWell(r.Context(), well)

@@ -12,20 +12,20 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type wellRepoImpl struct {
+type wellRepo struct {
 	db     *pgxpool.Pool
 	logger logger.Logger
 }
 
 func NewWellRepo(db *pgxpool.Pool, log logger.Logger) WellRepository {
-	return &wellRepoImpl{
+	return &wellRepo{
 		db:     db,
 		logger: log.With("layer", "repository"),
 	}
 }
 
 // Create - добавление новой скважины
-func (r *wellRepoImpl) Create(ctx context.Context, well *entity.Well) error {
+func (r *wellRepo) Create(ctx context.Context, well *entity.Well) error {
 	query := `
 		INSERT INTO wells (name, location, gammag, temp, tempust, depth,
 					pbuf, ptb, ppl, pz, q, roughness, diametr, a, b, mu,
@@ -67,7 +67,7 @@ func (r *wellRepoImpl) Create(ctx context.Context, well *entity.Well) error {
 }
 
 // GetByID - получение скважины по ID
-func (r *wellRepoImpl) GetByID(ctx context.Context, id int) (*entity.Well, error) {
+func (r *wellRepo) GetByID(ctx context.Context, id int) (*entity.Well, error) {
 	query := `SELECT * FROM wells WHERE id = $1`
 	well := &entity.Well{}
 	err := r.db.QueryRow(ctx, query, id).Scan(
@@ -104,7 +104,7 @@ func (r *wellRepoImpl) GetByID(ctx context.Context, id int) (*entity.Well, error
 }
 
 // Update - обновление данных скважины
-func (r *wellRepoImpl) Update(ctx context.Context, well *entity.Well) error {
+func (r *wellRepo) Update(ctx context.Context, well *entity.Well) error {
 	query := `
 	UPDATE wells 
 	SET name=$1, location=$2, gammag=$3, temp=$4, tempust=$5, 
@@ -151,7 +151,7 @@ func (r *wellRepoImpl) Update(ctx context.Context, well *entity.Well) error {
 }
 
 // Delete - удаление скважины по ID
-func (r *wellRepoImpl) Delete(ctx context.Context, id int) error {
+func (r *wellRepo) Delete(ctx context.Context, id int) error {
 	query := `DELETE FROM wells WHERE id = $1`
 	result, err := r.db.Exec(ctx, query, id)
 	if err != nil {
@@ -167,7 +167,7 @@ func (r *wellRepoImpl) Delete(ctx context.Context, id int) error {
 }
 
 // List - получение списка всех скважин (с пагинацией)
-func (r *wellRepoImpl) List(ctx context.Context, limit, offset int) ([]*entity.Well, error) {
+func (r *wellRepo) List(ctx context.Context, limit, offset int) ([]*entity.Well, error) {
 	query := `
 		SELECT id, name, location, pbuf, status, created, updated
 		FROM wells 

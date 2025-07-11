@@ -1,6 +1,8 @@
+package handler
+
 //Пример использования в обработчике (internal/handler/well_handler.go)
 
-func (h *WellHandler) CreateWell(w http.ResponseWriter, r *http.Request) {
+/*func (h *WellHandler) CreateWell(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Name        string  `json:"name"`
 		Pressure    float64 `json:"pressure"`
@@ -33,4 +35,4 @@ func (h *WellHandler) renderValidationErrors(w http.ResponseWriter, errors map[s
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"errors": errors,
 	})
-}
+} */

@@ -29,22 +29,22 @@ func (s *WellService) CreateWell(ctx context.Context, well *entity.Well) (*entit
 	if well.Name == "" {
 		return nil, errors.New("well name cannot be empty")
 	}
-	if well.Pressure <= 0 {
+	if well.Diameter <= 0 {
 		return nil, errors.New("pressure must be positive")
 	}
-	if well.Temperature <= -273.15 {
+	if well.Temp <= -273.15 {
 		return nil, errors.New("temperature cannot be below absolute zero")
 	}
 
 	// Выполняем расчеты
-	result, err := s.calculateWellParameters(well.Pressure, well.Temperature)
+	result, err := s.calculateWellParameters(well.Pbuf, well.Temp)
 	if err != nil {
 		return nil, fmt.Errorf("calculation failed: %w", err)
 	}
-	well.Result = result
+	well.Pmax = result
 
 	// Сохраняем в БД
-	if err := s.wellRepo.Create(ctx, well); err != nil {
+	if err := s.repo.Create(ctx, well); err != nil {
 		return nil, fmt.Errorf("repository error: %w", err)
 	}
 
@@ -57,7 +57,7 @@ func (s *WellService) GetWell(ctx context.Context, id int) (*entity.Well, error)
 		return nil, errors.New("invalid well ID")
 	}
 
-	well, err := s.wellRepo.GetByID(ctx, id)
+	well, err := s.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("repository error: %w", err)
 	}
@@ -71,7 +71,7 @@ func (s *WellService) GetWell(ctx context.Context, id int) (*entity.Well, error)
 // UpdateWell обновляет данные скважины
 func (s *WellService) UpdateWell(ctx context.Context, well *entity.Well) (*entity.Well, error) {
 	// Проверяем существование скважины
-	existing, err := s.wellRepo.GetByID(ctx, well.ID)
+	existing, err := s.repo.GetByID(ctx, well.ID)
 	if err != nil {
 		return nil, fmt.Errorf("repository error: %w", err)
 	}
@@ -80,21 +80,21 @@ func (s *WellService) UpdateWell(ctx context.Context, well *entity.Well) (*entit
 	}
 
 	// Валидация
-	if well.Pressure <= 0 {
+	if well.Pbuf <= 0 {
 		return nil, errors.New("pressure must be positive")
 	}
 
 	// Пересчитываем параметры при изменении давления/температуры
-	if well.Pressure != existing.Pressure || well.Temperature != existing.Temperature {
-		result, err := s.calculateWellParameters(well.Pressure, well.Temperature)
+	if well.Pbuf != existing.Pbuf || well.Temp != existing.Temp {
+		result, err := s.calculateWellParameters(well.Pbuf, well.Temp)
 		if err != nil {
 			return nil, fmt.Errorf("calculation failed: %w", err)
 		}
-		well.Result = result
+		well.Pmax = result
 	}
 
 	// Обновляем в БД
-	if err := s.wellRepo.Update(ctx, well); err != nil {
+	if err := s.repo.Update(ctx, well); err != nil {
 		return nil, fmt.Errorf("repository error: %w", err)
 	}
 
@@ -108,16 +108,16 @@ func (s *WellService) DeleteWell(ctx context.Context, id int) error {
 	}
 
 	// Проверяем существование
-	if _, err := s.wellRepo.GetByID(ctx, id); err != nil {
+	if _, err := s.repo.GetByID(ctx, id); err != nil {
 		return fmt.Errorf("repository error: %w", err)
 	}
 
-	return s.wellRepo.Delete(ctx, id)
+	return s.repo.Delete(ctx, id)
 }
 
 // ListWells возвращает список скважин с пагинацией
-func (s *WellService) ListWells(ctx context.Context) ([]*entity.Well, error) {
-	wells, err := s.wellRepo.List(ctx)
+func (s *WellService) ListWells(ctx context.Context, limit int, offset int) ([]*entity.Well, error) {
+	wells, err := s.repo.List(ctx, limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("repository error: %w", err)
 	}
